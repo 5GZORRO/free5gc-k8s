@@ -1,0 +1,72 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: upf
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {
+         "name" : "privnet", "ips": [ "10.100.200.38/24" ]
+      },
+      {
+         "name" : "pubnet"
+      },
+      {
+         "name" : "gilanet"
+      }
+    ]'
+spec:
+  containers:
+  - image: "artifactory.haifa.ibm.com:5130/weit/free5gc-upf-tools"
+    command: ["./free5gc-upfd", "-f", "../config/upfcfg.yaml"]
+    imagePullPolicy: Always
+    name: upf
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        add: ["NET_ADMIN"]
+    env:
+    - name: GIN_MODE
+      value: "release"
+    volumeMounts:
+      - name: upf-volume
+        mountPath: /free5gc/config/
+
+  restartPolicy: Always
+  volumes:
+    - name: upf-volume
+      configMap:
+        defaultMode: 420
+        name: upf-conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: upf-conf
+  labels:
+    name: upf-conf
+data:
+  upfcfg.yaml: |-
+    info:
+      version: 1.0.0
+      description: UPF configuration
+
+    configuration:
+      # debugLevel: panic|fatal|error|warn|info|debug|trace
+      debugLevel: debug
+
+      pfcp: # managment ?
+        - addr: 10.100.200.38
+
+      gtpu: # data ?
+        - addr: 172.15.0.3
+        # [optional] gtpu.name
+        # - name: upf.5gc.nctu.me
+        # [optional] gtpu.ifname
+        # - ifname: gtpif
+
+      dnn_list:
+        - dnn: internet
+          cidr: 60.60.0.0/16
+          # [optional] apn_list[*].natifname
+          # natifname: eth0

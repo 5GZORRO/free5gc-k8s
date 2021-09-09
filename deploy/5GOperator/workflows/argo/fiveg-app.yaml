@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: fiveg-app-
+spec:
+  entrypoint: handlerequest
+  workflowTemplateRef:
+    name: fiveg-app  
+  arguments:
+    parameters:
+    # parameters defined with defaults to be overriden by the caller
+    - name: network_name
+      value: "OVERRIDE"

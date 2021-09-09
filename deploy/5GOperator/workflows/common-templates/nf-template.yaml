@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: nf-template
+spec:
+  templates:
+  - name: create-nf
+    inputs:
+      parameters:
+      - name: nf_apiversion
+      - name: nf_kind
+      - name: success_condition
+      - name: nf_name
+      - name: nf_spec
+    resource:
+      action: create
+      successCondition: "{{inputs.parameters.success_condition}}"
+      setOwnerReference: true
+      manifest: |
+        apiVersion: {{inputs.parameters.nf_apiversion}}
+        kind: {{inputs.parameters.nf_kind}}
+        metadata:
+          name: {{inputs.parameters.nf_name}}
+        spec: {{inputs.parameters.nf_spec}}
+
+
+  - name: create-tr
+    # Identical to create-nf but without successCondition.
+    inputs:
+      parameters:
+      - name: nf_apiversion
+      - name: nf_kind
+      - name: nf_name
+      - name: nf_spec
+    resource:
+      action: create
+      setOwnerReference: true
+      manifest: |
+        apiVersion: {{inputs.parameters.nf_apiversion}}
+        kind: {{inputs.parameters.nf_kind}}
+        metadata:
+          name: {{inputs.parameters.nf_name}}
+        spec: {{inputs.parameters.nf_spec}}

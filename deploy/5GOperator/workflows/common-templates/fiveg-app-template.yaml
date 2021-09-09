@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: fiveg-app
+spec:
+  templates:
+  - name: handlerequest
+    dag:
+      tasks:
+
+      - name: create-app
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "vcache.example.com/v1alpha1"
+          - name: nf_kind
+            value: vCache
+          - name: nf_name
+            value: "app-{{workflow.name}}"
+          - name: success_condition
+            value: "status.registered == true"
+          - name: nf_spec
+            value: |
+              {
+                "vcacheType": "edge",
+                "dataNetwork": "{{workflow.parameters.network_name}}"
+              }

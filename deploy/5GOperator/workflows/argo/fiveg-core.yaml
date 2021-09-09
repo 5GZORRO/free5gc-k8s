@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: fiveg-core-
+spec:
+  entrypoint: handlerequest
+  workflowTemplateRef:
+    name: fiveg-core
+  arguments:
+    parameters:
+    - name: networks
+      value: |
+        [
+          {
+            "name": "sbi",
+            "master": "ens192",
+            "range": "10.100.200.0/24",
+            "start": "10.100.200.2",
+            "end": "10.100.200.50"
+          },
+          {
+            "name": "ngap",
+            "master": "ens192",
+            "range": "172.15.0.0/24",
+            "start": "172.15.0.2",
+            "end": "172.15.0.10"
+          },
+          {
+            "name": "up",
+            "master": "ens192",
+            "range": "172.15.0.0/24",
+            "start": "172.15.0.11",
+            "end": "172.15.0.20"
+          }
+        ]

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongo
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {
+         "name" : "privnet", "ips": [ "10.100.200.30/24" ]
+      }
+    ]'  
+spec:
+  containers:
+  - image: artifactory.haifa.ibm.com:5130/weit/mongo
+    command: ["mongod", "--port", "27017", "--bind_ip", "10.100.200.30"]
+    imagePullPolicy: Always
+    name: mongo
+
+  restartPolicy: Always

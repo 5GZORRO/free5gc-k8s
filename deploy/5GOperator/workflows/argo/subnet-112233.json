@@ -1,0 +1,11 @@
+{
+    "network_name": "gilan",
+    "network_master": "ens192",
+    "network_range": "10.20.0.0/24",
+    "network_start": "10.20.0.2",
+    "network_end": "10.20.0.50",
+
+    "smf_name": "smf-sample",
+    "sst": "1",
+    "sd": "112233"
+}

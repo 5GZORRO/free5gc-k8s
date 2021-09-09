@@ -1,0 +1,4 @@
+FROM artifactory.haifa.ibm.com:5130/weit/free5gc-upf
+
+RUN apt-get update \
+    && apt install -y net-tools iputils-ping tcpdump iptables

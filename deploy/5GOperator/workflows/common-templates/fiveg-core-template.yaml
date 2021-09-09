@@ -1,0 +1,294 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: fiveg-core
+spec:
+  templates:
+  - name: handlerequest
+    dag:
+      tasks:
+      - name: create-networks
+        templateRef:
+          name: network-template
+          template: create-network
+        arguments:
+          parameters:
+          - name: name
+            value: "{{item.name}}"
+          - name: master
+            value: "{{item.master}}"
+          - name: range
+            value: "{{item.range}}"
+          - name: start
+            value: "{{item.start}}"
+          - name: end
+            value: "{{item.end}}"
+        withParam: "{{workflow.parameters.networks}}"
+
+      - name: create-mongo
+        dependencies: [create-networks]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Mongo
+          - name: nf_name
+            value: mongo-sample
+          - name: success_condition
+            value: "status.outputs.podname == mongo-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/mongo"
+                }
+              }
+              
+      - name: create-nrf
+        dependencies: [create-mongo]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Nrf
+          - name: nf_name
+            value: nrf-sample
+          - name: success_condition
+            value: "status.outputs.podname == nrf-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-nrf",
+                  "nrf_name": "nrf-sample",
+                  "mnc": "93",
+                  "mcc": "208",
+                  "mongo_ip_address": "mongo-sample-sbi",
+                  "port": "8000",
+                }
+              }
+
+      - name: create-udr
+        dependencies: [create-nrf]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Udr
+          - name: nf_name
+            value: udr-sample
+          - name: success_condition
+            value: "status.outputs.podname == udr-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-udr",
+                  "udr_name": "udr-sample",
+                  "nrf_ip_address": "nrf-sample-sbi",
+                  "mongo_ip_address": "mongo-sample-sbi",
+                  "nrf_port": "8000"
+                }
+              }
+
+      - name: create-udm
+        dependencies: [create-udr]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Udm
+          - name: nf_name
+            value: udm-sample
+          - name: success_condition
+            value: "status.outputs.podname == udm-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-udm",
+                  "udm_name": "udm-sample",
+                  "nrf_ip_address": "nrf-sample-sbi"
+                }
+              }
+
+      - name: create-ausf
+        dependencies: [create-udm]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Ausf
+          - name: nf_name
+            value: ausf-sample
+          - name: success_condition
+            value: "status.outputs.podname == ausf-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-ausf",
+                  "ausf_name": "ausf-sample",
+                  "nrf_ip_address": "nrf-sample-sbi",
+                  "nrf_port": "8000"
+                }
+              }
+
+      - name: create-nssf
+        dependencies: [create-ausf]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Nssf
+          - name: nf_name
+            value: nssf-sample
+          - name: success_condition
+            value: "status.outputs.podname == nssf-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-nssf",
+                  "nssf_name": "nssf-sample",
+                  "nrf_ip_address": "nrf-sample-sbi",
+                  "nrf_port": "8000",
+                  "mnc": "93",
+                  "mcc": "208"
+                }
+              }
+
+      - name: create-amf
+        dependencies: [create-nssf]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Amf
+          - name: nf_name
+            value: amf-sample
+          - name: success_condition
+            value: "status.outputs.podname == amf-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-amf",
+                  "amf_name": "amf-sample",
+                  "nrf_ip_address": "nrf-sample-sbi",
+                  "nrf_port": "8000",
+                  "mnc": "93",
+                  "mcc": "208"
+                }
+              }
+
+      - name: create-pcf
+        dependencies: [create-amf]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Pcf
+          - name: nf_name
+            value: pcf-sample
+          - name: success_condition
+            value: "status.outputs.podname == pcf-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-pcf",
+                  "pcf_name": "pcf-sample",
+                  "nrf_ip_address": "nrf-sample-sbi",
+                  "nrf_port": "8000",
+                  "mongo_ip_address": "mongo-sample-sbi"    
+                }
+              }
+
+      - name: create-smf
+        dependencies: [create-pcf]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Smf
+          - name: nf_name
+            value: smf-sample
+          - name: success_condition
+            value: "status.outputs.podname == smf-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-smf",
+                  "smf_name": "smf-sample",
+                  "nrf_ip_address": "nrf-sample-sbi",
+                  "nrf_port": "8000",
+                  up_nodes: [
+                    { "name": "gNB",
+                      "type": "AN"
+                    }
+                  ]
+                }
+              }
+
+      - name: create-webconsole
+        dependencies: [create-mongo]
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Webconsole
+          - name: nf_name
+            value: webconsole-sample
+          - name: success_condition
+            value: "status.outputs.podname == webconsole-sample"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-webui",
+                  "mongo_ip_address": "mongo-sample-sbi"
+                  }
+              }
+  

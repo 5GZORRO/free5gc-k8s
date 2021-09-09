@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: network-template
+spec:
+  templates:
+  - name: create-network
+    inputs:
+      parameters:
+      - name: name
+      - name: master
+      - name: range
+      - name: start
+      - name: end
+    resource:
+      action: create
+      setOwnerReference: true
+      manifest: |
+        apiVersion: k8s.cni.cncf.io/v1
+        kind: NetworkAttachmentDefinition
+        metadata:
+          name: {{inputs.parameters.name}}
+        spec:
+          config: '{
+                    "cniVersion": "0.3.1",
+                    "name": "{{inputs.parameters.name}}",
+                    "type": "macvlan",
+                    "master": "{{inputs.parameters.master}}",
+                    "ipam": {
+                      "type": "whereabouts",
+                      "datastore": "kubernetes",
+                      "kubernetes": { "kubeconfig": "/etc/cni/net.d/whereabouts.d/whereabouts.kubeconfig" },
+                      "range": "{{inputs.parameters.range}}",
+                      "range_start": "{{inputs.parameters.start}}",
+                      "range_end": "{{inputs.parameters.end}}",
+                      "log_file" : "/tmp/whereabouts.log",
+                      "log_level" : "debug"
+                    },
+                    "gateway": "",
+                    "mtu": 1450
+                }'
+

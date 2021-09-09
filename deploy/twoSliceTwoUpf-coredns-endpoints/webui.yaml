@@ -1,0 +1,65 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webui
+  labels:
+    app: webui
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {
+         "name" : "privnet"
+      }
+    ]'
+spec:
+  containers:
+  - image: "artifactory.haifa.ibm.com:5130/weit/free5gc-webui"
+    command: ["./webui"]
+    imagePullPolicy: Always
+    name: webui
+    env:
+    - name: GIN_MODE
+      value: "release"
+    volumeMounts:
+      - name: webui-volume
+        mountPath: /free5gc/config/
+
+  restartPolicy: Always
+  volumes:
+    - name: webui-volume
+      configMap:
+        defaultMode: 420
+        name: webui-conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webui-conf
+  labels:
+    name: webui-conf
+data:
+  webuicfg.yaml: |-
+    info:
+      version: 1.0.0
+      description: WebUI initial local configuration
+    
+    configuration:
+      mongodb: # the mongodb connected by this webui
+        name: free5gc # name of the mongodb
+        url: mongodb://db-sbi.default.svc.cluster.local:27017 # 10.100.200.2:27017 # a valid URL of the mongodb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: webui
+  name: webui
+spec:
+  ports:
+  - port: 5000
+    name: webui-api
+    nodePort: 30050
+  selector:
+    app: webui
+  type: NodePort
+

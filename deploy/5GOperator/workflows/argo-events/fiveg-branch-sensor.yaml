@@ -1,0 +1,166 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: 5g-branch
+  namespace: 5g-core
+spec:
+  template:
+    serviceAccountName: argo-events-sa
+  dependencies:
+    - name: test-dep
+      eventSourceName: 5g-core
+      eventName: intent
+  triggers:
+    - template:
+        name: 5g-branch-trigger
+        k8s:
+          group: argoproj.io
+          version: v1alpha1
+          resource: workflows
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                name: "OVERRIDE"
+              spec:
+                entrypoint: handlerequest
+                arguments:
+                  parameters:
+                  - name: operation
+                    value: "OVERRIDE"
+
+                  - name: networks
+                    value: |
+                      []
+
+                  - name: network_name
+                    value: "OVERRIDE"
+                  - name: network_master
+                    value: "OVERRIDE"
+                  - name: network_range
+                    value: "OVERRIDE"
+                  - name: network_start
+                    value: "OVERRIDE"
+                  - name: network_end
+                    value: "OVERRIDE"
+                  - name: smf_name
+                    value: "OVERRIDE"
+                      
+                  - name: sst
+                    value: "OVERRIDE"
+                  - name: sd
+                    value: "OVERRIDE"
+
+                templates:
+                - name: handlerequest
+                  steps:
+                  - - name: deploy-core
+                      templateRef:
+                        name: fiveg-core
+                        template: handlerequest
+                      when: "{{workflow.parameters.operation}} == \"core\""
+
+                  - - name: deploy-subnet
+                      templateRef:
+                        name: fiveg-subnet
+                        template: handlerequest
+                      when: "{{workflow.parameters.operation}} == \"subnet\""
+
+                  - - name: deploy-app
+                      templateRef:
+                        name: fiveg-app
+                        template: handlerequest
+                      when: "{{workflow.parameters.operation}} == \"app\""
+
+          parameters:
+            - src:
+                #
+                # event_uuid is treated as an instance uuid for this
+                # flow instance
+                dependencyName: test-dep
+                dataKey: body.event_uuid
+              dest: metadata.name
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.operation
+              dest: spec.arguments.parameters.0.value
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.networks
+                value: |
+                  [
+                    {
+                      "name": "sbi",
+                      "master": "ens192",
+                      "range": "10.100.200.0/24",
+                      "start": "10.100.200.2",
+                      "end": "10.100.200.50"
+                    },
+                    {
+                      "name": "ngap",
+                      "master": "ens192",
+                      "range": "172.15.0.0/24",
+                      "start": "172.15.0.2",
+                      "end": "172.15.0.10"
+                    },
+                    {
+                      "name": "up",
+                      "master": "ens192",
+                      "range": "172.15.0.0/24",
+                      "start": "172.15.0.11",
+                      "end": "172.15.0.20"
+                    }
+                  ]
+              dest: spec.arguments.parameters.1.value
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.network_name
+                value: OVERRIDE
+              dest: spec.arguments.parameters.2.value
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.network_master
+                value: OVERRIDE
+              dest: spec.arguments.parameters.3.value
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.network_range
+                value: OVERRIDE
+              dest: spec.arguments.parameters.4.value
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.network_start
+                value: OVERRIDE
+              dest: spec.arguments.parameters.5.value
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.network_end
+                value: OVERRIDE
+              dest: spec.arguments.parameters.6.value
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.smf_name
+                value: OVERRIDE
+              dest: spec.arguments.parameters.7.value
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.sst
+                value: OVERRIDE
+              dest: spec.arguments.parameters.8.value
+
+            - src:
+                dependencyName: test-dep
+                dataKey: body.sd
+                value: OVERRIDE
+              dest: spec.arguments.parameters.9.value

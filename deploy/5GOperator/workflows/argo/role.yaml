@@ -1,0 +1,101 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: 5g-core-argo
+  namespace: 5g-core
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - pods
+  - pods/exec
+  - endpoints
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - "k8s.cni.cncf.io"
+  resources:
+  - network-attachment-definitions
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - delete
+- apiGroups:
+  - 5g.ibm.com
+  resources:
+  - mongoes
+  - ausfs
+  - nrves
+  - smfs
+  - udms
+  - udrs
+  - amfs
+  - nssfs
+  - pcfs
+  - webconsoles
+  - upfs
+  - transitions
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - 5g.ibm.com
+  resources:
+  - mongoes/status
+  - ausfs/status
+  - nrves/status
+  - smfs/status
+  - udms/status
+  - udrs/status
+  - amfs/status
+  - nssfs/status
+  - pcfs/status
+  - webconsoles/status
+  - transitions/status
+  - upfs/status
+  verbs:
+  - get
+- apiGroups:
+  - vcache.example.com
+  resources:
+  - '*'
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: 5g-core-argo
+  namespace: 5g-core
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: 5g-core-argo
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: 5g-core
+- kind: Group
+  name: system:serviceaccounts:default
+  apiGroup: rbac.authorization.k8s.io
+  namespace: 5g-core

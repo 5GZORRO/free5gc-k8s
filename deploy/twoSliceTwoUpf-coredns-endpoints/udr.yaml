@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: udr
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {
+         "name" : "privnet"
+      }
+    ]'  
+spec:
+  containers:
+  - image: "artifactory.haifa.ibm.com:5130/weit/free5gc-udr"
+    command: ["./udr", "-udrcfg", "../config/udrcfg.yaml"]
+    imagePullPolicy: Always
+    name: udr
+    env:
+    - name: GIN_MODE
+      value: "release"
+    - name: DB_URI
+      value: mongodb://db-sbi.default.svc.cluster.local/free5gc
+
+    volumeMounts:
+      - name: udr-volume
+        mountPath: /free5gc/config/
+
+  restartPolicy: Always
+  volumes:
+    - name: udr-volume
+      configMap:
+        defaultMode: 420
+        name: udr-conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: udr-conf
+  labels:
+    name: udr-conf
+data:
+  udrcfg.yaml: |-
+    info:
+      version: 1.0.0
+      description: UDR initial local configuration
+
+    configuration:
+      sbi: # Service-based interface information
+        scheme: http # the protocol for sbi (http or https)
+        registerIPv4: udr-sbi.default.svc.cluster.local # 10.100.200.4 # IP used to register to NRF
+        bindingIPv4: udr-sbi.default.svc.cluster.local # 10.100.200.4 # IP used to bind the service
+        port: 8000 # port used to bind the service
+      mongodb:
+        name: free5gc # Database name in MongoDB
+        url: mongodb://db-sbi.default.svc.cluster.local:27017 # URL of MongoDB
+      nrfUri: http://nrf-sbi.default.svc.cluster.local:8000 # a valid URI of NRF
+
+    # the kind of log output
+      # debugLevel: how detailed to output, value: trace, debug, info, warn, error, fatal, panic
+      # ReportCaller: enable the caller report or not, value: true or false
+    logger:
+      UDR:
+        debugLevel: info
+        ReportCaller: false
+      MongoDBLibrary:
+        debugLevel: info
+        ReportCaller: false
+      PathUtil:
+        debugLevel: info
+        ReportCaller: false
+      OpenApi:
+        debugLevel: info
+        ReportCaller: false

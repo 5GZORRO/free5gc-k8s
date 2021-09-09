@@ -1,0 +1,280 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: db-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.2
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nrf-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: nrf-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.3
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: udr-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: udr-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.4
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: udm-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: udm-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.5
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ausf-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: ausf-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.6
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nssf-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: nssf-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.7
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: amf-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: amf-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.8
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pcf-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: pcf-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.9
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf1-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: upf1-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.10
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf2-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: upf2-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.11
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smf-sbi
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: smf-sbi
+subsets:
+  - addresses:
+      - ip: 10.100.200.12
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: amf-ngap
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: amf-ngap
+subsets:
+  - addresses:
+      - ip: 172.15.0.2
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf1-up
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: upf1-up
+subsets:
+  - addresses:
+      - ip: 172.15.0.3
+    ports:
+      - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf2-up
+spec:
+  clusterIP: None
+  ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: upf2-up
+subsets:
+  - addresses:
+      - ip: 172.15.0.4
+    ports:
+      - port: 80

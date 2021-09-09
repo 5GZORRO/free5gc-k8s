@@ -1,0 +1,10 @@
+apiVersion: vcache.example.com/v1alpha1
+kind: vCache
+metadata:
+  name: vcache-edge-1
+  namespace: default
+  labels:
+    kubedriver.alm/metricKey: test-metric-key-vcache
+spec:
+  vcacheType: edge
+  dataNetwork: gilanet

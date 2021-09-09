@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: fiveg-subnet-
+spec:
+  entrypoint: handlerequest
+  workflowTemplateRef:
+    name: fiveg-subnet
+  arguments:
+    parameters:
+    # parameters defined with defaults to be overriden by the caller
+    - name: network_name
+      value: "OVERRIDE"
+    - name: network_master
+      value: "OVERRIDE"
+    - name: network_range
+      value: "OVERRIDE"
+    - name: network_start
+      value: "OVERRIDE"
+    - name: network_end
+      value: "OVERRIDE"
+
+    - name: smf_name
+      value: smf-sample
+
+    - name: sst
+      value: "OVERRIDE"
+    - name: sd
+      value: "OVERRIDE"

@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: upf2
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {
+         "name" : "privnet"
+      },
+      {
+         "name" : "pubnet"
+      },
+      {
+         "name" : "gilanet"
+      }
+    ]'
+spec:
+  containers:
+  - image: "artifactory.haifa.ibm.com:5130/weit/free5gc-upf-tools"
+    command: ["./free5gc-upfd", "-f", "../config/upfcfg.yaml"]
+    imagePullPolicy: Always
+    name: upf2
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        add: ["NET_ADMIN"]
+    env:
+    - name: GIN_MODE
+      value: "release"
+    volumeMounts:
+      - name: upf2-volume
+        mountPath: /free5gc/config/
+
+  restartPolicy: Always
+  volumes:
+    - name: upf2-volume
+      configMap:
+        defaultMode: 420
+        name: upf2-conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: upf2-conf
+  labels:
+    name: upf2-conf
+data:
+  upfcfg.yaml: |-
+    info:
+      version: 1.0.0
+      description: UPF configuration
+
+    configuration:
+      # debugLevel: panic|fatal|error|warn|info|debug|trace
+      debugLevel: debug
+
+      pfcp: # managment ?
+        - addr: upf2-sbi.default.svc.cluster.local # 10.100.200.11
+
+      gtpu: # data ?
+        - addr: upf2-up.default.svc.cluster.local # 172.15.0.4
+        # [optional] gtpu.name
+        # - name: upf.5gc.nctu.me
+        # [optional] gtpu.ifname
+        # - ifname: gtpif
+
+      dnn_list:
+          # [optional] apn_list[*].natifname
+          # natifname: eth0
+        - dnn: internet
+          cidr: 10.10.0.0/16
+

@@ -1,0 +1,156 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: fiveg-subnet
+spec:
+  templates:
+  - name: handlerequest
+    dag:
+      tasks:
+
+      - name: create-datanetwork
+        when: "{{workflow.parameters.network_name}} != \"OVERRIDE\""
+        templateRef:
+          name: network-template
+          template: create-network
+        arguments:
+          parameters:
+          - name: name
+            value: "{{workflow.parameters.network_name}}"
+          - name: master
+            value: "{{workflow.parameters.network_master}}"
+          - name: range
+            value: "{{workflow.parameters.network_range}}"
+          - name: start
+            value: "{{workflow.parameters.network_start}}"
+          - name: end
+            value: "{{workflow.parameters.network_end}}"
+
+      - name: create-upf-on-datanetwork
+        dependencies: [create-datanetwork]
+        when: "{{workflow.parameters.network_name}} != \"OVERRIDE\""
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Upf
+          - name: nf_name
+            value: "upf-{{workflow.name}}"
+          - name: success_condition
+            value: "status.outputs.podname == upf-{{workflow.name}}"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-upf-tools",
+                  "upf_name": "upf-{{workflow.name}}",
+                  "data_network_name": "{{workflow.parameters.network_name}}",
+                  "dnns": [
+                    {
+                      "dnn_name": "internet",
+                      apn_cidr: "60.60.0.0/16"
+                    },
+                    {
+                      "dnn_name": "internet",
+                      apn_cidr: "10.10.0.0/16"                    
+                    }
+                  ]
+                }
+              }
+
+      - name: create-upf
+        when: "{{workflow.parameters.network_name}} == \"OVERRIDE\""
+        templateRef:
+          name: nf-template
+          template: create-nf
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Upf
+          - name: nf_name
+            value: "upf-{{workflow.name}}"
+          - name: success_condition
+            value: "status.outputs.podname == upf-{{workflow.name}}"            
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-upf-tools",
+                  "upf_name": "upf-{{workflow.name}}",
+                  "dnns": [
+                    {
+                      "dnn_name": "internet",
+                      apn_cidr: "60.60.0.0/16"
+                    },
+                    {
+                      "dnn_name": "internet",
+                      apn_cidr: "10.10.0.0/16"                    
+                    }
+                  ]
+                }
+              }
+
+      - name: smf-add-node
+        dependencies: [create-upf-on-datanetwork, create-upf]
+        templateRef:
+          name: nf-template
+          template: create-tr
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Transition
+          - name: nf_name
+            value: "smf-addnode-{{workflow.name}}"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "resourceType": "smfs.v1alpha1.5g.ibm.com",
+                  "resourceNamespace": "{{workflow.namespace}}",
+                  "resourceName": "{{workflow.parameters.smf_name}}",
+                  "transition": "AttachNode",
+                  "properties": {
+                    "nodeId": "upf-{{workflow.name}}",
+                    "nodeName": "upf-{{workflow.name}}",
+                    "nodeType": "UPF",
+                    "sd": "{{workflow.parameters.sd}}",
+                    "sst": "{{workflow.parameters.sst}}"
+                  }
+                }
+              }
+
+      - name: smf-add-link
+        dependencies: [create-upf-on-datanetwork, create-upf]
+        templateRef:
+          name: nf-template
+          template: create-tr
+        arguments:
+          parameters:
+          - name: nf_apiversion
+            value: "5g.ibm.com/v1alpha1"
+          - name: nf_kind
+            value: Transition
+          - name: nf_name
+            value: "smf-addlink-{{workflow.name}}"
+          - name: nf_spec
+            value: |
+              {
+                "config": {
+                  "resourceType": "smfs.v1alpha1.5g.ibm.com",
+                  "resourceNamespace": "{{workflow.namespace}}",
+                  "resourceName": "{{workflow.parameters.smf_name}}",
+                  "transition": "AddLink",
+                  "properties": {
+                    "nodeId": "gNB",
+                    "connectedTo": "upf-{{workflow.name}}"
+                  }
+                }
+              }
