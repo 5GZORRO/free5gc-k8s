@@ -47,6 +47,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-upf-tools",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "upf_name": "upf-{{workflow.name}}",
                   "data_network_name": "{{workflow.parameters.network_name}}",
                   "dnns": [
@@ -82,6 +83,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-upf-tools",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "upf_name": "upf-{{workflow.name}}",
                   "dnns": [
                     {

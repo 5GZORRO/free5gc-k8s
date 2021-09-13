@@ -42,6 +42,9 @@ For macvlan to properly work connecting the containers and pods to the already e
   Forged transmits
   ```
 
+**Important note for deployment**
+
+Ensure no other services or stale deployments exist in the platform to avoid overlapping of ipaddresses.
 
 ## K8s networking
 
@@ -71,6 +74,8 @@ On every k8s node perform the below in this order
 sudo apt-get install libtool
 sudo apt-get install pkg-config
 sudo apt-get install libmnl-dev
+sudo apt install make
+sudo apt install net-tools
 ```
 
 ### Build and install
@@ -81,6 +86,19 @@ git clone https://github.com/PrinzOwO/gtp5g && cd gtp5g
 git checkout tags/v0.3.2
 make clean && make
 sudo make install
+```
+
+### Add additional network interface
+
+Using your hypervisor management tool (e.g. esxi) edit the VM to add additional interface
+
+**Important:** the newly interface should be set with the same name across all k8s node VMs; interface is being used as the master for macvlan
+
+Run the below replacing interface name accordingly
+
+```
+sudo ip link set ens192 promisc on
+sudo ifconfig ens192 up
 ```
 
 ## UERANSIM

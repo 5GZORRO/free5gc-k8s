@@ -6,11 +6,9 @@
 
 Refer [here](https://github.ibm.com/WEIT/5ginitcontainer) for building the init-container image
 
-## Build and run the operator
-
 Log into kubernetes master
 
-### Clone
+## Clone
 
 ```bash
 cd ~
@@ -19,9 +17,22 @@ cd 5GOperator
 git checkout master-hrl
 ```
 
-### Build and deploy
+## Golang
+
+Install golang **v1.16**: https://golang.org/doc/install
+
+```
+source ~/.profile
+```
+
+## operator-sdk
+
+Install operator-sdk **v1.8.0** from [install-from-github-release](https://sdk.operatorframework.io/docs/installation/#install-from-github-release)
+
 
 build
+
+Note: gcc (`sudo apt-get install gcc`) is required for building the operator
 
 ```bash
 make generate
@@ -50,6 +61,7 @@ Refer [here](docs/argo.md) for installing argo and argo-events
 Run the below to add additional roles to `default` service account in `5g-core` namespace. These roles are used by initContainer and argo workflow
 
 ```
+kubectl namespace create 5g-core
 kubectl apply -f workflows/argo/role.yaml
 ```
 

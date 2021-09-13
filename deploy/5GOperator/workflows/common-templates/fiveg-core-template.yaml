@@ -44,7 +44,8 @@ spec:
             value: |
               {
                 "config": {
-                  "image": "artifactory.haifa.ibm.com:5130/weit/mongo"
+                  "image": "artifactory.haifa.ibm.com:5130/weit/mongo",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer"
                 }
               }
               
@@ -68,6 +69,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-nrf",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "nrf_name": "nrf-sample",
                   "mnc": "93",
                   "mcc": "208",
@@ -96,6 +98,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-udr",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "udr_name": "udr-sample",
                   "nrf_ip_address": "nrf-sample-sbi",
                   "mongo_ip_address": "mongo-sample-sbi",
@@ -123,6 +126,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-udm",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "udm_name": "udm-sample",
                   "nrf_ip_address": "nrf-sample-sbi"
                 }
@@ -148,6 +152,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-ausf",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "ausf_name": "ausf-sample",
                   "nrf_ip_address": "nrf-sample-sbi",
                   "nrf_port": "8000"
@@ -174,6 +179,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-nssf",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "nssf_name": "nssf-sample",
                   "nrf_ip_address": "nrf-sample-sbi",
                   "nrf_port": "8000",
@@ -202,6 +208,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-amf",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "amf_name": "amf-sample",
                   "nrf_ip_address": "nrf-sample-sbi",
                   "nrf_port": "8000",
@@ -230,6 +237,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-pcf",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "pcf_name": "pcf-sample",
                   "nrf_ip_address": "nrf-sample-sbi",
                   "nrf_port": "8000",
@@ -257,6 +265,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-smf",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "smf_name": "smf-sample",
                   "nrf_ip_address": "nrf-sample-sbi",
                   "nrf_port": "8000",
@@ -288,6 +297,7 @@ spec:
               {
                 "config": {
                   "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-webui",
+                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
                   "mongo_ip_address": "mongo-sample-sbi"
                   }
               }
