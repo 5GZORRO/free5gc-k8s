@@ -4,6 +4,8 @@ https://open-cluster-management.io/
 
 The following instructions are derived from [here](https://open-cluster-management.io/getting-started/quick-start/)
 
+the following instructions assume your managed cluster name is `paris-1`
+
 ## Clusteradm CLI
 
 Install CLI on both hub and clusters to be managed
@@ -22,18 +24,18 @@ invoke
 clusteradm init
 ```
 
-copy the generated command and replace "managed cluster name" with `paris-1`.
+copy the generated command and replace "managed cluster name" with e.g. `paris-1`.
 
 ### Deploy a klusterlet agent
 
-Log into kubernetes managed cluster
+Log into kubernetes **managed** cluster
 
 
 and invoke previously join command appending the context of your managed cluster
 
 ### Accept join request and verify
 
-Log into kubernetes hub cluster
+Log into kubernetes **hub** cluster
 
 run
 
@@ -55,7 +57,7 @@ clusteradm accept --clusters paris-1
 
 ### Verify ManagedCluster CR created successfully
 
-Log into kubernetes hub cluster
+Log into kubernetes **hub** cluster
 
 ```
 kubectl get managedcluster
@@ -77,13 +79,13 @@ kubectl label managedclusters/paris-1 name=paris-1 --overwrite
 
 The below commands derived from [this](https://open-cluster-management.io/getting-started/integration/app-lifecycle/) guide
 
-Log into kubernetes hub cluster
+Log into kubernetes **hub** cluster
 
 ### Install kustomize
 
 https://kubectl.docs.kubernetes.io/installation/kustomize/binaries/
 
-### Install golang
+### Install golang (recent version)
 
 https://golang.org/doc/install and select `Linux` tab
 
@@ -114,14 +116,16 @@ kubectl create ns open-cluster-management-agent-addon
 
 ### Install add-on
 
-Log into kubernetes hub cluster
+Log into kubernetes **hub** cluster
+
+`export MANAGED_CLUSTER_NAME=paris-1`
 
 ```
 cd ~/multicloud-operators-subscription
 make deploy-addon
 ```
 
-check it
+ensure subscription deployment had been created on the managed cluster
 
 Log into kubernetes **managed** cluster
 

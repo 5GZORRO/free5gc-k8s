@@ -10,7 +10,7 @@ spec:
   channel: gitops-chn-ns/gitops
   placement:
     clusters:
-    - name: cluster1
+    - name: paris-1
   packageOverrides:
   - packageName: fiveg-app
     packageOverrides:

@@ -10,7 +10,7 @@ spec:
   channel: gitops-chn-ns/gitops
   placement:
     clusters:
-    - name: cluster1
+    - name: paris-1
   packageOverrides:
   - packageName: fiveg-subnet
     packageOverrides:
@@ -21,13 +21,13 @@ spec:
       - name: network_name
         value: "OVERRIDE"
       - name: network_master
-        value: "ens192"
+        value: ""
       - name: network_range
-        value: "10.20.0.0/24"
+        value: ""
       - name: network_start
-        value: "10.20.0.2"
+        value: ""
       - name: network_end
-        value: "10.20.0.50"
+        value: ""
 
       - name: smf_name
         value: smf-sample
