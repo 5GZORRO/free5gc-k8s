@@ -76,7 +76,7 @@ kubectl apply -f  workflows/common-templates  -n 5g-core
 deploy core and wait for the flow to complete
 
 ```
-argo -n 5g-core  submit workflows/argo/fiveg-core.yaml
+argo -n 5g-core  submit workflows/argo/fiveg-core.yaml --parameter-file workflows/argo/core.json
 ```
 
 deploy subnet and wait for the flow to complete

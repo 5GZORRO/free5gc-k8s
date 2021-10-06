@@ -176,6 +176,10 @@ docker build --tag artifactory.haifa.ibm.com:5130/weit/free5gc-upf-tools --force
 
 then push it with `docker push ...`
 
+### Private registry
+
+Review the [following readme](docs/registry.md) for using a private registry in your deployment
+
 ## Deployment options
 
 the following deployment options are supported. Follow instructions in the links and proceed with the below sections..

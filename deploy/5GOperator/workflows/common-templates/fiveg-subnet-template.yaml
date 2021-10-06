@@ -39,16 +39,16 @@ spec:
           - name: nf_kind
             value: Upf
           - name: nf_name
-            value: "upf-{{workflow.name}}"
+            value: "upf-5g-subnet-{{workflow.parameters.sd}}"
           - name: success_condition
-            value: "status.outputs.podname == upf-{{workflow.name}}"
+            value: "status.outputs.podname == upf-5g-subnet-{{workflow.parameters.sd}}"
           - name: nf_spec
             value: |
               {
                 "config": {
-                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-upf-tools",
-                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
-                  "upf_name": "upf-{{workflow.name}}",
+                  "image": "{{workflow.parameters.registry}}/weit/free5gc-upf-tools",
+                  "image_init": "{{workflow.parameters.registry}}/weit/5ginitcontainer",
+                  "upf_name": "upf-5g-subnet-{{workflow.parameters.sd}}",
                   "data_network_name": "{{workflow.parameters.network_name}}",
                   "dnns": [
                     {
@@ -57,7 +57,7 @@ spec:
                     },
                     {
                       "dnn_name": "internet",
-                      apn_cidr: "10.10.0.0/16"                    
+                      apn_cidr: "10.10.0.0/16"
                     }
                   ]
                 }
@@ -75,16 +75,16 @@ spec:
           - name: nf_kind
             value: Upf
           - name: nf_name
-            value: "upf-{{workflow.name}}"
+            value: "upf-5g-subnet-{{workflow.parameters.sd}}"
           - name: success_condition
-            value: "status.outputs.podname == upf-{{workflow.name}}"            
+            value: "status.outputs.podname == upf-5g-subnet-{{workflow.parameters.sd}}"
           - name: nf_spec
             value: |
               {
                 "config": {
-                  "image": "artifactory.haifa.ibm.com:5130/weit/free5gc-upf-tools",
-                  "image_init": "artifactory.haifa.ibm.com:5130/weit/5ginitcontainer",
-                  "upf_name": "upf-{{workflow.name}}",
+                  "image": "{{workflow.parameters.registry}}/weit/free5gc-upf-tools",
+                  "image_init": "{{workflow.parameters.registry}}/weit/5ginitcontainer",
+                  "upf_name": "upf-5g-subnet-{{workflow.parameters.sd}}",
                   "dnns": [
                     {
                       "dnn_name": "internet",
@@ -92,7 +92,7 @@ spec:
                     },
                     {
                       "dnn_name": "internet",
-                      apn_cidr: "10.10.0.0/16"                    
+                      apn_cidr: "10.10.0.0/16"
                     }
                   ]
                 }
@@ -120,8 +120,8 @@ spec:
                   "resourceName": "{{workflow.parameters.smf_name}}",
                   "transition": "AttachNode",
                   "properties": {
-                    "nodeId": "upf-{{workflow.name}}",
-                    "nodeName": "upf-{{workflow.name}}",
+                    "nodeId": "upf-5g-subnet-{{workflow.parameters.sd}}",
+                    "nodeName": "upf-5g-subnet-{{workflow.parameters.sd}}",
                     "nodeType": "UPF",
                     "sd": "{{workflow.parameters.sd}}",
                     "sst": "{{workflow.parameters.sst}}"
@@ -152,7 +152,7 @@ spec:
                   "transition": "AddLink",
                   "properties": {
                     "nodeId": "gNB",
-                    "connectedTo": "upf-{{workflow.name}}"
+                    "connectedTo": "upf-5g-subnet-{{workflow.parameters.sd}}"
                   }
                 }
               }

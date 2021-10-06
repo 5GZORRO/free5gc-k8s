@@ -1,4 +1,6 @@
 {
+    "registry": "172.15.0.167:5000",
+
     "smf_name": "smf-sample",
     "sst": "1",
     "sd": "010203"

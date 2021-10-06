@@ -9,6 +9,9 @@ spec:
   arguments:
     parameters:
     # parameters defined with defaults to be overriden by the caller
+    - name: registry
+      value: "OVERRIDE"
+
     - name: network_name
       value: "OVERRIDE"
     - name: network_master

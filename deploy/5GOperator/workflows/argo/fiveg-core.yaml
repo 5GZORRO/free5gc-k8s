@@ -8,6 +8,8 @@ spec:
     name: fiveg-core
   arguments:
     parameters:
+    - name: registry
+      value: "OVERRIDE"
     - name: networks
       value: |
         [

@@ -1,4 +1,6 @@
 {
+    "registry": "172.15.0.167:5000",
+
     "network_name": "gilan",
     "network_master": "ens192",
     "network_range": "10.20.0.0/24",
